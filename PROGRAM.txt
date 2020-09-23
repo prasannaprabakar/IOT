@@ -1,0 +1,185 @@
+
+#include <LiquidCrystal.h>
+
+float vout, m; //temporary variable to hold sensor reading
+LiquidCrystal lcd(7, 6, 5, 4, 3, 2);
+
+int B,a=1,b=1;
+void setup()
+{
+  Serial.begin(9600);
+  pinMode(A0, OUTPUT); // Configuring pin A1 as input
+  pinMode(9, INPUT); // Configuring pin A1 as input
+  pinMode(8, INPUT); // Configuring pin A1 as input
+  lcd.begin(16, 2);
+ 
+
+ 
+  lcd.print("PLS WAIT GSM");
+
+  lcd.setCursor(0, 1);
+  lcd.print("Initlizing.....");
+  delay(5000);
+  beep();
+  beep();
+  
+   intro_SMS();
+
+ 
+}
+
+void loop() {
+
+main:
+
+  lcd.clear();
+  lcd.print(" IR:");
+
+
+  if (digitalRead(9) == 0)
+  {
+    lcd.print("IN");
+  } else
+  {
+    lcd.print("OUT");
+     beep();
+
+    if(a==1)
+    {
+      
+      SMS1();
+      a=0;
+      }
+
+  }
+
+  lcd.setCursor(0, 1);
+  lcd.print("PIR:");
+
+  if (digitalRead(8) == 1)
+  {
+    lcd.print("HUMAN DETECTED");
+     beep();
+     if(b==1)
+    {
+      
+      SMS1();
+      b=0;
+      }
+  }
+  if (digitalRead(8) == 0)
+  {
+    lcd.print("MONITORING");
+  }
+  
+  delay(3000);
+  lcd.clear();
+  goto main;
+  
+
+}
+
+
+void intro_SMS()
+{
+  Serial.println("AT+CMGF=1");    //Sets the GSM Module in Text Mode
+  delay(1000);  // Delay of 1000 milli seconds or 1 second
+  Serial.println("AT+CMGS=\"7904724080\"\r"); // Replace x with mobile number
+  delay(1000);
+  Serial.println("SMART SECURITY SYSTEM ACTIVATED");// The SMS text you want to send
+  delay(100);
+  Serial.println((char)26);// ASCII code of CTRL+Z
+  delay(1000);
+}
+void SMS1()
+{
+  Serial.println("AT+CMGF=1");    //Sets the GSM Module in Text Mode
+  delay(1000);  // Delay of 1000 milli seconds or 1 second
+  Serial.println("AT+CMGS=\"7904724080\"\r"); // Replace x with mobile number
+  delay(1000);
+  Serial.println("WARNING!!!");// The SMS text you want to send
+  delay(100);
+    Serial.println(" OBJECT MISSING!");// The SMS text you want to send
+  Serial.println((char)26);// ASCII code of CTRL+Z
+  delay(5000);
+
+ 
+}
+
+void SMS2()
+{
+  Serial.println("AT+CMGF=1");    //Sets the GSM Module in Text Mode
+  delay(1000);  // Delay of 1000 milli seconds or 1 second
+  Serial.println("AT+CMGS=\"7904724080\"\r"); // Replace x with mobile number
+  delay(1000);
+  Serial.println("Alert, HUMAN DETECTED");// The SMS text you want to send
+  delay(100);
+  Serial.println((char)26);// ASCII code of CTRL+Z
+  delay(5000);
+
+ 
+}
+
+void intro_net()
+{
+
+  lcd.clear();
+  lcd.print("    PLS WAIT...");
+
+  delay(4000);
+  lcd.setCursor(0, 1);
+  lcd.print("NET Configration....");
+  delay(4000);
+
+
+  Serial.println("AT+CIPSTATUS");    //Sets the GSM Module in Text Mode
+  delay(3000);
+  Serial.println("AT+CENG=1,1");    //Sets the GSM Module in Text Mode
+  delay(3000);
+  Serial.println("AT+SAPBR=3,1,\"CONTYPE\",\"GPRS\"");    //Sets the GSM Module in Text Mode
+  delay(3000);
+  Serial.println("AT+SAPBR=3,1,\"APN\",\"www\"");    //Sets the GSM Module in Text Mode
+  delay(10000);
+  Serial.println("AT+SAPBR=1,1");    //Sets the GSM Module in Text Mode
+  delay(3000);
+
+
+  Serial.println("AT+HTTPSSL=1");    //Sets the GSM Module in Text Mode
+  delay(3000);
+
+  lcd.clear();
+  lcd.print("INTERNET ACTIVATE");
+
+  delay(1000);
+  lcd.setCursor(0, 1);
+  lcd.print("COMPLETED...");
+  Serial.println("AT+HTTPINIT");    //Sets the GSM Module in Text Mode
+  delay(5000);
+
+
+
+
+
+
+
+
+  lcd.clear();
+  lcd.print("INTERNET CONFIG");
+
+  delay(2000);
+  lcd.setCursor(0, 1);
+  lcd.print("COMPLETED...");
+  delay(4000);
+
+
+}
+
+void beep()
+{
+
+  digitalWrite(A0, HIGH);
+  delay(500);
+  digitalWrite(A0, LOW);
+  delay(500);
+
+}
